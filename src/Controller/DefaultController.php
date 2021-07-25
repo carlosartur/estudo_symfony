@@ -2,15 +2,21 @@
 
 namespace App\Controller;
 
+use App\Entity\Tag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController
+class DefaultController extends AbstractController
 {
     #[Route('/first', name: 'first')]
     public function first(): Response
     {
-        return new JsonResponse(['number' => random_int(1, 100)], Response::HTTP_OK);
+        $manager = $this->get('doctrine');
+        $repository = $manager->getRepository(Tag::class);
+        $allTags = $repository->findAll();
+
+        return new JsonResponse(['tags' => $allTags], Response::HTTP_OK);
     }
 }
